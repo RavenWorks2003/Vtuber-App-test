@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#000000">
-<link rel="manifest" href="manifest.webmanifest?v=7">
+<link rel="manifest" href="manifest.webmanifest?v=8">
 <link rel="icon" href="icon.png">
 <title>Fuchs VTuber</title>
 <style>
@@ -89,8 +89,8 @@
       <option value="full">Ganzkörper</option>
     </select>
   </label>
-  <p>Mit zwei Fingern zoomen. Ein Finger seitwärts dreht das Modell, hoch und runter verschiebt das Bild.</p>
-  <button class="btn" id="btnTurnReset">Drehung zurücksetzen (von vorne)</button>
+  <p>Ein Finger dreht das Modell in alle Richtungen. Zwei Finger: auseinander/zusammen zoomt, gemeinsam hoch/runter verschiebt das Bild.</p>
+  <button class="btn" id="btnTurnReset">Ansicht zurücksetzen (von vorne)</button>
   <label class="row">Glow (Bloom) <input type="checkbox" id="cBloom"></label>
   <label>Glow-Stärke <output></output><input type="range" id="rBloom" min="0" max="2" step="0.05"></label>
   <label>Glow-Schwelle <output></output><input type="range" id="rThresh" min="0" max="0.8" step="0.01"></label>
@@ -138,6 +138,6 @@
   <p id="ver"></p>
 </aside>
 
-<script src="app.js?v=7"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>
