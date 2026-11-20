@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#14101f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.png">
+<title>Fuchs VTuber</title>
+<style>
+  :root { --ui: rgba(20,16,31,.82); --ink: #f3eefc; --muted: #b9add6; --acc: #a77bff; --acc2: #6f5bd9; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #00ff00; font: 15px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); }
+  #stage { position: fixed; inset: 0; width: 100vw; height: 100vh; touch-action: none; display: block; }
+  #cam { position: fixed; right: 12px; bottom: 84px; width: 96px; border-radius: 10px; transform: scaleX(-1); opacity: 0; pointer-events: none; }
+  #cam.show { opacity: .85; }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 8px; justify-content: center; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); }
+  .bar button, .emo button { border: 0; border-radius: 999px; background: var(--ui); color: var(--ink); height: 48px; min-width: 48px; padding: 0 14px; font-size: 15px; backdrop-filter: blur(6px); }
+  .bar button.on, .emo button.on { background: var(--acc2); }
+  .bar button.main { background: var(--acc); color: #160c2e; font-weight: 600; }
+  .bar button.main.on { background: #ff5d8f; }
+  .emo { position: fixed; top: calc(10px + env(safe-area-inset-top)); left: 0; right: 0; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 0 12px; }
+  .emo button { height: 38px; font-size: 14px; padding: 0 12px; }
+  #fps, #emoLabel { position: fixed; left: 12px; font-size: 12px; color: var(--ink); background: var(--ui); padding: 3px 8px; border-radius: 6px; }
+  #fps { top: calc(58px + env(safe-area-inset-top)); }
+  #emoLabel { top: calc(84px + env(safe-area-inset-top)); }
+  #status { position: fixed; left: 50%; top: 40%; transform: translateX(-50%); max-width: calc(100vw - 32px); background: var(--ui); padding: 10px 16px; border-radius: 12px; text-align: center; display: none; }
+  #status.err { background: #5a1830; }
+  #panel { position: fixed; top: 0; right: 0; bottom: 0; width: min(380px, 100vw); background: rgba(20,16,31,.94); overflow-y: auto; padding: 16px 16px 90px; transform: translateX(100%); transition: transform .2s; }
+  #panel.open { transform: none; }
+  #panel h2 { font-size: 18px; margin: 4px 0 12px; display: flex; justify-content: space-between; align-items: center; }
+  #panel h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 18px 0 6px; }
+  #panel label { display: block; margin: 8px 0; }
+  #panel label.row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  #panel input[type=range] { width: 100%; accent-color: var(--acc); }
+  #panel output { float: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  #panel select, #panel .btn { width: 100%; height: 42px; border-radius: 10px; border: 1px solid #3b3158; background: #221a38; color: var(--ink); font-size: 15px; padding: 0 10px; }
+  #panel .btn { display: flex; align-items: center; justify-content: center; margin: 8px 0; cursor: pointer; }
+  #panel input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--acc); }
+  #panel p { color: var(--muted); font-size: 13px; margin: 6px 0; }
+  #btnClose { background: none; border: 0; color: var(--ink); font-size: 26px; width: 44px; height: 44px; }
+  #pickVrm { position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); display: none; flex-direction: column; align-items: center; gap: 6px; background: var(--acc); color: #160c2e; font-weight: 600; font-size: 18px; padding: 18px 26px; border-radius: 16px; text-align: center; max-width: calc(100vw - 32px); }
+  #pickVrm small { font-weight: 400; font-size: 13px; }
+  body.clean .bar, body.clean .emo, body.clean #fps, body.clean #emoLabel, body.clean #panel { display: none !important; }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<video id="cam" playsinline muted></video>
+
+<div class="emo">
+  <button id="btnEmoAuto" title="Stimmung automatisch aus dem Gesicht">Auto</button>
+  <button data-emo="happy">Freude</button>
+  <button data-emo="angry">Wut</button>
+  <button data-emo="sad">Traurig</button>
+  <button data-emo="surprised">Überrascht</button>
+</div>
+<div id="fps">–</div>
+<div id="emoLabel">Neutral</div>
+<div id="status"></div>
+<label id="pickVrm" for="fileVrm">Deine VRM-Datei wählen<small>Einmal auswählen, danach merkt sich die App das Modell.</small></label>
+
+<div class="bar">
+  <button id="btnCam" class="main">Tracking starten</button>
+  <button id="btnCal" title="Neutral kalibrieren">Neutral</button>
+  <button id="btnHide" title="Knöpfe ausblenden">Stream</button>
+  <button id="btnFull" title="Vollbild">⛶</button>
+  <button id="btnSettings" title="Einstellungen">⚙</button>
+</div>
+
+<aside id="panel">
+  <h2>Einstellungen <button id="btnClose" aria-label="Schließen">×</button></h2>
+
+  <h3>Bild</h3>
+  <label>Hintergrund
+    <select id="sBg">
+      <option value="green">Greenscreen</option>
+      <option value="blue">Bluescreen</option>
+      <option value="dark">Dunkel</option>
+      <option value="transparent">Transparent (ohne Glow)</option>
+    </select>
+  </label>
+  <label>Ausschnitt
+    <select id="sFrame">
+      <option value="head">Kopf</option>
+      <option value="chest">Brust</option>
+      <option value="half">Halbkörper</option>
+      <option value="full">Ganzkörper</option>
+    </select>
+  </label>
+  <p>Mit zwei Fingern zoomen, mit einem Finger hoch und runter schieben.</p>
+  <label class="row">Glow (Bloom) <input type="checkbox" id="cBloom"></label>
+  <label>Glow-Stärke <output></output><input type="range" id="rBloom" min="0" max="2" step="0.05"></label>
+  <label>Glow-Schwelle <output></output><input type="range" id="rThresh" min="0" max="0.8" step="0.01"></label>
+  <label>Bildschärfe <output></output><input type="range" id="rQuality" min="0.75" max="2.5" step="0.25"></label>
+  <label>Bildrate
+    <select id="sFps">
+      <option value="30">30 fps (Akku schonen, kühler)</option>
+      <option value="60">60 fps (flüssig)</option>
+    </select>
+  </label>
+  <p>Weniger Schärfe und 30 fps entlasten das Handy, wenn es warm wird.</p>
+  <label class="row">FPS anzeigen <input type="checkbox" id="cFps"></label>
+
+  <h3>Tracking</h3>
+  <label class="row">Spiegeln (wie ein Spiegel) <input type="checkbox" id="cMirror"></label>
+  <label class="row">Zwinkern schärfen <input type="checkbox" id="cWink"></label>
+  <label class="row">Kamerabild zeigen <input type="checkbox" id="cPreview"></label>
+  <label>Augen-Empfindlichkeit <output></output><input type="range" id="rEye" min="0.6" max="1.6" step="0.05"></label>
+  <label>Mund-Empfindlichkeit <output></output><input type="range" id="rMouth" min="0.5" max="2" step="0.05"></label>
+  <label>Augenbrauen <output></output><input type="range" id="rBrow" min="0.5" max="2.5" step="0.05"></label>
+  <label>Glättung <output></output><input type="range" id="rSmooth" min="0" max="1" step="0.05"></label>
+  <label>Kopfbewegung <output></output><input type="range" id="rHead" min="0.3" max="1.6" step="0.05"></label>
+  <label>Körper folgt dem Kopf <output></output><input type="range" id="rBody" min="0" max="1.5" step="0.05"></label>
+  <p>Tipp: Neutral schauen und „Neutral“ drücken, dann passt der Ruhezustand.</p>
+
+  <h3>Leben</h3>
+  <label>Schweif-Wind <output></output><input type="range" id="rWind" min="0" max="1.5" step="0.05"></label>
+  <label>Atmung <output></output><input type="range" id="rBreath" min="0" max="1.5" step="0.05"></label>
+  <label>Stimmungsstärke (Schweif + Puls) <output></output><input type="range" id="rEmo" min="0" max="1.3" step="0.05"></label>
+
+  <h3>Modell</h3>
+  <label class="btn" for="fileVrm">Andere VRM-Datei laden</label>
+  <input type="file" id="fileVrm" accept=".vrm,model/gltf-binary,application/octet-stream" hidden>
+  <button class="btn" id="btnDefault">Standard-Fuchs laden</button>
+  <button class="btn" id="btnReset">Alle Einstellungen zurücksetzen</button>
+</aside>
+
+<script src="app.js"></script>
+</body>
+</html>
