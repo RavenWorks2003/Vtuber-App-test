@@ -1,6 +1,6 @@
 // Offline cache: after the first visit the app, tracking model and fox load from the phone.
 // Files are requested with ?v=<app version>, so a new version never mixes with old files.
-const CACHE = 'fuchs-vtuber-v5';
+const CACHE = 'fuchs-vtuber-v7';
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (e) => e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener('fetch', (e) => {

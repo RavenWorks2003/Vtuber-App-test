@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#14101f">
-<link rel="manifest" href="manifest.webmanifest?v=5">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.webmanifest?v=7">
 <link rel="icon" href="icon.png">
 <title>Fuchs VTuber</title>
 <style>
   :root { --ui: rgba(20,16,31,.82); --ink: #f3eefc; --muted: #b9add6; --acc: #a77bff; --acc2: #6f5bd9; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; height: 100%; overflow: hidden; background: #00ff00; font: 15px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #000; font: 15px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); }
   #stage { position: fixed; inset: 0; width: 100vw; height: 100vh; touch-action: none; display: block; }
   #cam { position: fixed; right: 12px; bottom: 84px; width: 96px; border-radius: 10px; transform: scaleX(-1); opacity: 0; pointer-events: none; }
   #cam.show { opacity: .85; }
@@ -74,6 +74,7 @@
   <h3>Bild</h3>
   <label>Hintergrund
     <select id="sBg">
+      <option value="black">Schwarz</option>
       <option value="green">Greenscreen</option>
       <option value="blue">Bluescreen</option>
       <option value="dark">Dunkel</option>
@@ -88,7 +89,8 @@
       <option value="full">Ganzkörper</option>
     </select>
   </label>
-  <p>Mit zwei Fingern zoomen, mit einem Finger hoch und runter schieben.</p>
+  <p>Mit zwei Fingern zoomen. Ein Finger seitwärts dreht das Modell, hoch und runter verschiebt das Bild.</p>
+  <button class="btn" id="btnTurnReset">Drehung zurücksetzen (von vorne)</button>
   <label class="row">Glow (Bloom) <input type="checkbox" id="cBloom"></label>
   <label>Glow-Stärke <output></output><input type="range" id="rBloom" min="0" max="2" step="0.05"></label>
   <label>Glow-Schwelle <output></output><input type="range" id="rThresh" min="0" max="0.8" step="0.01"></label>
@@ -120,6 +122,7 @@
   <label>Vorhersage (weniger Verzögerung) <output></output><input type="range" id="rPredict" min="0" max="1" step="0.05"></label>
   <label>Kopfbewegung <output></output><input type="range" id="rHead" min="0.3" max="1.6" step="0.05"></label>
   <label>Körper folgt dem Kopf <output></output><input type="range" id="rBody" min="0" max="1.5" step="0.05"></label>
+  <label>Oberkörper-Schwung (links/rechts, Schweife schwingen mit) <output></output><input type="range" id="rSway" min="0" max="2" step="0.05"></label>
   <p>Tipp: Neutral schauen und „Neutral“ drücken, dann passt der Ruhezustand.</p>
 
   <h3>Leben</h3>
@@ -135,6 +138,6 @@
   <p id="ver"></p>
 </aside>
 
-<script src="app.js?v=5"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>
