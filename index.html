@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#000000">
-<link rel="manifest" href="manifest.webmanifest?v=8">
+<link rel="manifest" href="manifest.webmanifest?v=9">
 <link rel="icon" href="icon.png">
 <title>Fuchs VTuber</title>
 <style>
@@ -41,6 +41,11 @@
   #btnClose { background: none; border: 0; color: var(--ink); font-size: 26px; width: 44px; height: 44px; }
   #pickVrm { position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); display: none; flex-direction: column; align-items: center; gap: 6px; background: var(--acc); color: #160c2e; font-weight: 600; font-size: 18px; padding: 18px 26px; border-radius: 16px; text-align: center; max-width: calc(100vw - 32px); }
   #pickVrm small { font-weight: 400; font-size: 13px; }
+  .cap { position: fixed; right: 12px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; }
+  .cap button { border: 0; border-radius: 999px; background: var(--ui); color: var(--ink); width: 52px; height: 52px; font-size: 22px; backdrop-filter: blur(6px); }
+  .cap button.on { background: #e0245e; }
+  #recTime { position: fixed; right: 12px; top: calc(50% + 70px); display: none; background: #e0245e; color: #fff; font-size: 13px; padding: 2px 8px; border-radius: 6px; font-variant-numeric: tabular-nums; }
+  body.clean .cap,
   body.clean .bar, body.clean .emo, body.clean #fps, body.clean #emoLabel, body.clean #panel { display: none !important; }
 </style>
 </head>
@@ -59,6 +64,12 @@
 <div id="emoLabel">Neutral</div>
 <div id="status"></div>
 <label id="pickVrm" for="fileVrm">Deine VRM-Datei wählen<small>Einmal auswählen, danach merkt sich die App das Modell.</small></label>
+
+<div class="cap">
+  <button id="btnPhoto" title="Foto speichern" aria-label="Foto">📷</button>
+  <button id="btnRec" title="Video aufnehmen" aria-label="Video">⏺</button>
+</div>
+<div id="recTime">0:00</div>
 
 <div class="bar">
   <button id="btnCam" class="main">Tracking starten</button>
@@ -104,6 +115,10 @@
   <p>Weniger Schärfe und 30 fps entlasten das Handy, wenn es warm wird.</p>
   <label class="row">FPS anzeigen <input type="checkbox" id="cFps"></label>
 
+  <h3>Foto &amp; Video</h3>
+  <label class="row">Ton bei Videos mit aufnehmen <input type="checkbox" id="cAudio"></label>
+  <p>📷 und ⏺ rechts am Rand. Die Dateien landen in „Downloads“ und erscheinen in der Galerie. Knöpfe sind nie mit im Bild. Im „Stream“-Modus läuft eine Aufnahme weiter.</p>
+
   <h3>Tracking</h3>
   <label>Tracking rechnet auf
     <select id="sDelegate">
@@ -138,6 +153,6 @@
   <p id="ver"></p>
 </aside>
 
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>
